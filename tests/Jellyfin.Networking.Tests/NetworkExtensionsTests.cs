@@ -29,6 +29,7 @@ namespace Jellyfin.Networking.Tests
         public static void TryParse_ValidHostStrings_True(string address)
             => Assert.True(NetworkExtensions.TryParseHost(address, out _, true, true));
 
+#pragma warning disable xUnit1028
         [Property]
         public static Property TryParse_IPv4Address_True(IPv4Address address)
             => NetworkExtensions.TryParseHost(address.Item.ToString(), out _, true, true).ToProperty();
@@ -36,6 +37,7 @@ namespace Jellyfin.Networking.Tests
         [Property]
         public static Property TryParse_IPv6Address_True(IPv6Address address)
             => NetworkExtensions.TryParseHost(address.Item.ToString(), out _, true, true).ToProperty();
+#pragma warning restore xUnit1028
 
         /// <summary>
         /// All should be invalid address strings.

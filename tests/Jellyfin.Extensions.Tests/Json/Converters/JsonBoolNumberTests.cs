@@ -37,8 +37,10 @@ namespace Jellyfin.Extensions.Tests.Json.Converters
             Assert.Equal(value, output);
         }
 
+#pragma warning disable xUnit1028
         [Property]
         public Property Deserialize_NonZeroInt_True(NonZeroInt input)
             => JsonSerializer.Deserialize<bool>(input.ToString(), _jsonOptions).ToProperty();
+#pragma warning restore xUnit1028
     }
 }

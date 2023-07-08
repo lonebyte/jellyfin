@@ -19,6 +19,7 @@ namespace Jellyfin.Model.Tests.Extensions
             Assert.Equal(expectedResult, StringHelper.FirstToUpper(input));
         }
 
+#pragma warning disable xUnit1028
         [Property]
         public Property FirstToUpper_RandomArg_Correct(NonEmptyString input)
         {
@@ -28,5 +29,6 @@ namespace Jellyfin.Model.Tests.Extensions
             return (!char.IsLower(result[0])).Label("First char is uppercase")
                 .And(input.Item.Length == 1 || result[1..].Equals(input.Item[1..], StringComparison.Ordinal)).Label("Remaining chars are unmodified");
         }
+#pragma warning restore xUnit1028
     }
 }
