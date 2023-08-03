@@ -16,10 +16,10 @@ ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 # https://github.com/intel/compute-runtime/releases
-ARG GMMLIB_VERSION=22.0.2
-ARG IGC_VERSION=1.0.10395
-ARG NEO_VERSION=22.08.22549
-ARG LEVEL_ZERO_VERSION=1.3.22549
+ARG GMMLIB_VERSION=22.3.0
+ARG IGC_VERSION=1.0.13230.7
+ARG NEO_VERSION=23.05.25593.11
+ARG LEVEL_ZERO_VERSION=1.3.25593.11
 
 # Install dependencies:
 # mesa-va-drivers: needed for AMD VAAPI. Mesa >= 20.1 is required for HEVC transcoding.
@@ -31,7 +31,7 @@ RUN apt-get update \
  && apt-get update \
  && apt-get install --no-install-recommends --no-install-suggests -y \
    mesa-va-drivers \
-   jellyfin-ffmpeg5 \
+   jellyfin-ffmpeg6 \
    openssl \
    locales \
 # Intel VAAPI Tone mapping dependencies:
@@ -39,7 +39,7 @@ RUN apt-get update \
 # Do not use the intel-opencl-icd package from repo since they will not build with RELEASE_WITH_REGKEYS enabled.
  && mkdir intel-compute-runtime \
  && cd intel-compute-runtime \
- && wget https://github.com/intel/compute-runtime/releases/download/${NEO_VERSION}/intel-gmmlib_${GMMLIB_VERSION}_amd64.deb \
+ && wget https://github.com/intel/compute-runtime/releases/download/${NEO_VERSION}/libigdgmm12_${GMMLIB_VERSION}_amd64.deb \
  && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-${IGC_VERSION}/intel-igc-core_${IGC_VERSION}_amd64.deb \
  && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-${IGC_VERSION}/intel-igc-opencl_${IGC_VERSION}_amd64.deb \
  && wget https://github.com/intel/compute-runtime/releases/download/${NEO_VERSION}/intel-opencl-icd_${NEO_VERSION}_amd64.deb \
@@ -71,6 +71,8 @@ RUN dotnet publish Jellyfin.Server --disable-parallel --configuration Release --
 FROM app
 
 ENV HEALTHCHECK_URL=http://localhost:8096/health
+ENV JELLYFIN_CONFIG_DIR=/config
+ENV JELLYFIN_CACHE_DIR=/cache
 
 COPY --from=builder /jellyfin /jellyfin
 COPY --from=web-builder /jellyfin/jellyfin-web /jellyfin/jellyfin-web
@@ -78,8 +80,6 @@ COPY --from=web-builder /jellyfin/jellyfin-web /jellyfin/jellyfin-web
 EXPOSE 8096
 VOLUME /cache /config
 ENTRYPOINT ["./jellyfin/jellyfin", \
-    "--datadir", "/config", \
-    "--cachedir", "/cache", \
     "--ffmpeg", "/usr/lib/jellyfin-ffmpeg/ffmpeg"]
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3 \
