@@ -71,7 +71,7 @@ RUN dotnet publish Jellyfin.Server --disable-parallel --configuration Release --
 FROM app
 
 ENV HEALTHCHECK_URL=http://localhost:8096/health
-ENV JELLYFIN_CONFIG_DIR=/config
+ENV JELLYFIN_DATA_DIR=/config
 ENV JELLYFIN_CACHE_DIR=/cache
 
 COPY --from=builder /jellyfin /jellyfin
